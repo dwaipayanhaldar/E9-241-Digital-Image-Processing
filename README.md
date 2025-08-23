@@ -12,6 +12,6 @@ It provides implementations of classical image processing techniques and algorit
 ## 🎯 Goals & Skills Demonstrated
 - Understanding of fundamental image processing operations: **filtering**, **edge detection**, **binarization**, **connected-component labeling**, and more
 - Implementation of **adaptive algorithms** (e.g., variable-window Otsu binarization)
-- Emphasis on both correctness and performance (e.g., using **integral histograms**, **NumPy**, and **Numba** for speed)
+- Emphasis on both correctness and performance 
 
 ---
