@@ -26,12 +26,9 @@ def connected_components(img):
                     num_components += 1
                     con_img[i, j] = num_components
                 else:
-                    if np.unique(active_labels).size == 1:
-                        con_img[i, j] = active_labels[0]
-                    else:
-                        con_img[i, j] = np.min(active_labels)
-                        mask = np.isin(con_img, active_labels)
-                        con_img[mask] = con_img[i, j]
+                    con_img[i, j] = np.min(active_labels)
+                    mask = np.isin(con_img, active_labels)
+                    con_img[mask] = con_img[i, j]
     
     output_image = np.zeros((image.shape[0], image.shape[1], 3), dtype=np.uint8)
 
@@ -39,8 +36,9 @@ def connected_components(img):
     hist_con[0] = -1
     k = np.argmax(hist_con)
 
-    output_image[:,:,:][con_img > 0] = 0
-    output_image[:,:,:][con_img == 0] = 255
     output_image[:,:,0][con_img == k] = 255
+    small_components = np.where(hist_con < 100)[0]
+    mask_small = np.isin(con_img, small_components)
+    output_image[mask_small] = [255, 255, 255]
 
     return output_image
