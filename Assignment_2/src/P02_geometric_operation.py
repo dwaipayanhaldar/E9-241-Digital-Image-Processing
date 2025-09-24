@@ -1,7 +1,9 @@
 import numpy as np
 
 def bil_int(image, a_1, a_2):
-    
+    H, W = image.shape
+    if not (0 <= a_1 < H - 1 and 0 <= a_2 < W - 1):
+        return 0
 
     m = int(np.floor(a_1))
     n = int(np.floor(a_2))
@@ -11,20 +13,21 @@ def bil_int(image, a_1, a_2):
     b_3 = (m+1-a_1)*(a_2-n)
     b_4 = (m+1-a_1)*(n+1-a_2)
 
-    return image[m,n]*b_4 + image[m,n+1]*b_3 + image[m+1,n]*b_2 + image[m+1,n+1]*b_1
+    return image[m,n]*b_4 + image[m,n+1]*b_2 + image[m+1,n]*b_3 + image[m+1,n+1]*b_1
 
 def upscale(image, b = 2):
     H, W = image.shape
-    upscaled_image = np.zeros((b*H, b*W))
+    new_H, new_W = b*H, b*W
+    upscaled_image = np.zeros((new_H, new_W))
 
-    for i in range(1, upscaled_image.shape[0] - 2):
-        for j in range(1, upscaled_image.shape[1] - 2):
-            upscaled_image[i,j] = bil_int(image, i/2,j/2)
+    for i in range(new_H):
+        for j in range(new_W):
+            upscaled_image[i,j] = bil_int(image, i/b,j/b)
     
     return upscaled_image
 
-def rotate_image(img, theta):
-    H, W = img.shape
+def rotate_image(image, theta):
+    H, W = image.shape
     cos_t, sin_t = np.cos(theta), np.sin(theta)
 
     corners = np.array([[0, 0], [H, 0], [0, W], [H, W]])
@@ -52,6 +55,6 @@ def rotate_image(img, theta):
             y = -sin_t * xi + cos_t * yj
 
             if 0 <= x < H-1 and 0 <= y < W-1:
-                rotated_img[i, j] = bil_int(img, x, y)
+                rotated_img[i, j] = bil_int(image, x, y)
 
     return rotated_img
