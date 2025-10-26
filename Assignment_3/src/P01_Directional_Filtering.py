@@ -29,7 +29,7 @@ def directional_filter(dft_img, theta_min, theta_max):
     H_i, H_j = np.meshgrid(np.arange(M), np.arange(N))
     H_i -= (M//2)
     H_j -= (N//2)
-    theta = -1*np.arctan2(H_j,H_i)
+    theta = 1*np.arctan2(H_j,H_i)
 
     theta_min_radian = (theta_min*np.pi)/180
     theta_max_radian = (theta_max*np.pi)/180
