@@ -193,7 +193,7 @@ $H_4$ has the least MSE as expected because it is the same output with a scale f
         \item[(d)] Finally, the restored image with both the filter is plotted in Fig.\ref{fig:2d}. The MSE of the images are as follows:
         \[        \text{MSE}_{H_{DFT}} = 0.00266, \quad
         \text{MSE}_{H_{cont}} = 0.01092\]
-        The MSE of the image restored with Gaussian fit is poorer as per MSE. Also, visually there are artifacts visible in the border of the Gaussian fit images. The reason is simple that the image blurred with a filter with ripples cannot be deblurred using a smooth filter with no ripples. Evidently, there will be ripples that will come up in the final image and those are shown as some high frequency component towards the border of the image.
+        The MSE of the image restored with Gaussian fit is poorer as per MSE. Also, visually there are artifacts visible in the border of the Gaussian fit images. The reason is simple that the image blurred with a filter with ripples cannot be deblurred using a smooth filter with no ripples. Evidently, there will be ripples that will come up in the final image because those are not cancelled in the frequency domain. Ripples are visible across the image when zoomed.
         \begin{figure}[H]
         \centering
         \includegraphics[scale = .18]{Output_Images/P02d.png}
