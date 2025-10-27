@@ -37,10 +37,7 @@ def directional_filter(dft_img, theta_min, theta_max):
     H = np.where((theta >= theta_min_radian) & (theta<= theta_max_radian), 1,0)
     return H
 
-def mse(img_ref,img):
-    M, N = img_ref.shape
-    diff_sq = np.abs((img - img_ref)**2)
-    mse = np.sum(diff_sq)/(M*N)
-    return mse
+def mse(img_ref, img):
+    return np.mean(np.abs(img - img_ref) ** 2)
 
     

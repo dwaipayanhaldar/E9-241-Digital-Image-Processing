@@ -15,7 +15,7 @@ def gaussian_filter_fd(k,M,N):
     return H_cont
 
 if __name__ == "__main__":
-    G = gaussian_filter_tf()
+    G = gaussian_filter_td()
     G_kernel_padded = np.pad(G, ((6,6),(6,6)))
     plt.imshow(G_kernel_padded, cmap= 'gray')
     plt.show()
