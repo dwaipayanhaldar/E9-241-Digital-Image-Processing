@@ -1,0 +1,221 @@
+\documentclass[12pt,a4paper,onecolumn]{exam}
+\usepackage{amsmath}
+\usepackage{amssymb}
+\usepackage{graphicx}
+\usepackage{float}
+\usepackage{geometry}
+\usepackage{tikz}
+\usepackage[skins]{tcolorbox} % Use [skins] to get the rounded shape
+
+% --- Define our simple \questionheader command ---
+\newcommand{\questionheader}[1]{%
+  \begin{tcolorbox}[
+    enhanced,
+    colback=black,
+    coltext=white,
+    boxrule=0pt,              
+    fontupper=\Large\bfseries, 
+    arc=4mm                   
+  ]
+  #1 
+  \end{tcolorbox}%
+}
+% --- End of definition ---
+\newtcolorbox{answerbox}[1]{
+  boxrule=0.4pt,   % Sets the thickness of the border
+  colback=white,   % Sets the background color
+  height=#1,       % <-- Use the first argument (#1) as the height
+}
+
+
+\usepackage[font = small]{caption}
+\usepackage{subcaption}
+
+\newenvironment{blanksolution}
+  {%
+    \renewcommand{\solutiontitle}{\noindent}%
+    \begin{solution}%
+  }%
+  {\end{solution}}  
+\usepackage{listings}
+
+\lstset{
+    language=Python,
+    basicstyle=\ttfamily, 
+    }
+
+\begin{document}
+
+\begingroup  
+    \centering
+    \LARGE E9 241 Digital Image Processing\\
+    \LARGE Assignment 4\\[0.5em]
+    \large \today\\[0.5em]
+    \large Dwaipayan Haldar\par
+\endgroup
+\noindent\rule{\textwidth}{0.5pt}
+\printanswers
+\renewcommand{\solutiontitle}{\noindent\textbf{Ans:}\enspace}
+
+\questionheader{1. Image Downsampling}
+
+\begin{solution}
+    \begin{itemize}
+      \item[(a)] When we are downsampling the image by selecting the N\textsuperscript{th} pixel in the image without a low pass filter, then aliasing would occur, so there are dots when N = 2,4. But when N = 5, the whole image changes because there is some other image hidden in every 5th pixel of the \verb|city.png| image. This is the typical case of aliasing. Fig.\ref{fig:1ai} shows the results for downsampling with the custom function. Fig.\ref{fig:1aii} gives the same interpolation results for library functions. Here the answer is different due to the implementation of the library function. It uses interpolation instead of selecting every N\textsuperscript{th} pixel so the answer is different.
+      \end{itemize}
+
+      \begin{figure}[H]
+      \centering
+      \includegraphics[scale = .27]{Output_Images/P01a.png}
+      \caption{Original Image, Downsampled Image for N = 2,4,5 by custom function}
+      \label{fig:1ai}
+      \end{figure}
+    
+      \begin{figure}[H]
+      \centering
+      \includegraphics[scale = .27]{Output_Images/P01a_lf.png}
+      \caption{Original Image, Downsampled Image for N = 2,4,5 by library function}
+      \label{fig:1aii}
+      \end{figure}
+    \begin{itemize}
+      \item[(b)] There is a significant improvement in the result when we have applied a low pass filter, the aliasing effects are not there anymore. When we select the N=5, those severe aliasing effect is not there. Visually, the results are comparable to the output of the library functions. The MSE of the image for N=2,4,5 are 0.00051, 0.00092, 0.0013 respectively. The MSE is higher for N=5 as opposed to N = 2 and 4. Fig.\ref{fig:1bi} and Fig.\ref{fig:1bii} gives the results for the downsampling of the smoothed image via custom function and library function respectively. 
+    \end{itemize}
+
+      \begin{figure}[H]
+      \centering
+      \includegraphics[scale = .27]{Output_Images/P01bi.png}
+      \caption{Original Image, Downsampled Smoothed Image for N = 2,4,5 by custom function}
+      \label{fig:1bi}
+      \end{figure}
+    
+      \begin{figure}[H]
+      \centering
+      \includegraphics[scale = .27]{Output_Images/P01bii.png}
+      \caption{Original Image, Downsampled Smoothed Image for N = 2,4,5 by library function}
+      \label{fig:1bii}
+      \end{figure}
+    
+      \begin{itemize}
+        \item[(c)] For N = 5, the optimal value of window size and sigma value is found out. The loop is ran over all window size in the list \verb|[3,5,7,9,11,13,15,17]| and for all sigma in the range of \verb|[0.05,4]| with resolution of 0.05. The optimal parameters comes out to be: 
+        \[
+          \text{Window Size}_{\text{optimal}} = 13; \sigma_{\text{optimal}} = 3.05
+        \]
+        For this parameters the optimal MSE comes out to be 0.000885.
+      \end{itemize}
+
+\end{solution}
+
+\questionheader{2. Edge Detection}
+
+\begin{solution}
+  \begin{itemize}
+    \item[(a)]  Here, I have used Prewitt Operator. In case of the prewitt, thresholding is applied to make the edge map. So, the output is binary. The threshold is chosen to be equal to Otsu's threshold. For the Laplacian of Gaussian case, the zero crossings are detected. One observation in all the case is that LoG is more precise than the Prewitt, which is more widespread. The results are shown below.
+  \end{itemize}
+
+    \begin{figure}[H]
+    \centering
+    \includegraphics[scale = .27]{Output_Images/P02ai.png}
+    \caption{Original Image, Edge Map by Prewitt, Edge Map by Laplacian of Gaussian for Checkerboard} 
+    \label{fig:2ai}
+    \end{figure}
+    
+    \begin{figure}[H]
+    \centering
+    \includegraphics[scale = .27]{Output_Images/P02aii.png}
+    \caption{Original Image, Edge Map by Prewitt, Edge Map by Laplacian of Gaussian for Coins}
+    \label{fig:2aii}
+    \end{figure}
+
+    \begin{figure}[H]
+    \centering
+    \includegraphics[scale = .27]{Output_Images/P02aiii.png}
+    \caption{Original Image, Edge Map by Prewitt, Edge Map by Laplacian of Gaussian for Flowers} 
+    \label{fig:2aiii}
+    \end{figure}
+    
+    \begin{figure}[H]
+    \centering
+    \includegraphics[scale = .27]{Output_Images/P02aiv.png}
+    \caption{Original Image, Edge Map by Prewitt, Edge Map by Laplacian of Gaussian for Main Building}
+    \label{fig:2aiv}
+    \end{figure}
+
+  \begin{itemize}
+    \item[(b)] Gaussian Noise is added. Gaussian smoothing is applied with window size $7 \times 7$ and $\sigma = 3$ and Prewitt and Laplacian of Gaussian is applied. The results are shown below. 
+  \end{itemize}
+
+    \begin{figure}[H]
+    \centering
+    \includegraphics[scale = .27]{Output_Images/P02bi.png}
+    \caption{Original Image, Edge Map by Prewitt, Edge Map by Laplacian of Gaussian for smoothed Checkerboard} 
+    \label{fig:2bi}
+    \end{figure}
+    
+    \begin{figure}[H]
+    \centering
+    \includegraphics[scale = .27]{Output_Images/P02bii.png}
+    \caption{Original Image, Edge Map by Prewitt, Edge Map by Laplacian of Gaussian for smoothed Coins}
+    \label{fig:2bii}
+    \end{figure}
+
+    \begin{figure}[H]
+    \centering
+    \includegraphics[scale = .27]{Output_Images/P02biii.png}
+    \caption{Original Image, Edge Map by Prewitt, Edge Map by Laplacian of Gaussian for smoothed Flowers} 
+    \label{fig:2biii}
+    \end{figure}
+    
+    \begin{figure}[H]
+    \centering
+    \includegraphics[scale = .27]{Output_Images/P02biv.png}
+    \caption{Original Image, Edge Map by Prewitt, Edge Map by Laplacian of Gaussian for smoothed Main Building}
+    \label{fig:2biv}
+    \end{figure}
+  
+  \begin{itemize}
+    \item[] The results with noise but without the gaussian smoothing is also calculated and shown below. 
+  \end{itemize}
+
+    \begin{figure}[H]
+    \centering
+    \includegraphics[scale = .27]{Output_Images/P02bv.png}
+    \caption{Original Image, Edge Map by Prewitt, Edge Map by Laplacian of Gaussian for noisy Checkerboard} 
+    \label{fig:2bv}
+    \end{figure}
+    
+    \begin{figure}[H]
+    \centering
+    \includegraphics[scale = .27]{Output_Images/P02bvi.png}
+    \caption{Original Image, Edge Map by Prewitt, Edge Map by Laplacian of Gaussian for noisy Coins}
+    \label{fig:2bvi}
+    \end{figure}
+
+    \begin{figure}[H]
+    \centering
+    \includegraphics[scale = .27]{Output_Images/P02bvii.png}
+    \caption{Original Image, Edge Map by Prewitt, Edge Map by Laplacian of Gaussian for noisy Flowers} 
+    \label{fig:2bvii}
+    \end{figure}
+    
+    \begin{figure}[H]
+    \centering
+    \includegraphics[scale = .27]{Output_Images/P02bviii.png}
+    \caption{Original Image, Edge Map by Prewitt, Edge Map by Laplacian of Gaussian for noisy Main Building}
+    \label{fig:2bviii}
+    \end{figure}
+
+    \begin{itemize}
+      \item[(c)] 
+      \begin{itemize}
+        \item[$\bullet$] \textbf{Clean vs. Noisy Images} \\
+        Fig.\ref{fig:2ai} - Fig.\ref{fig:2aiv} shows the results for clean images and Fig.\ref{fig:2bv} - Fig.\ref{fig:2bviii} shows the results for the noisy image. With the clean image, both the algorithms gives fine results, LoG gives a better precision producing finer edges than the Prewitt because it detects the zero crossings, while the Prewitt detects the local maxima and minima. Zero crossings is more precise. 
+        But for noisy images, the results of both the algorithms falters. Relatively, the LoG performs better than the first order filter. Such results are expected. The 2nd order filter is less sensitive to noises. Since a Gaussian smoothing is done internally before the Laplacian, so that smooths out the noises and so the effect of noise is a bit less than the first order filter. \\ 
+        \item[$\bullet$] \textbf{Gradient vs LoG Edge Detection} \\
+        The difference between the gradient and LoG based detector is pretty clear from the results. LoG based method has better edge localization than the Gradient based method. LoG based method are less sensitive to noises than the gradient based method. After smoothing of the noise, performance of both the algorithm on noisy image improves, while the prewitt has wider edges and LoG has finer edges. \\
+        \item[$\bullet$] \textbf{With and without Gaussian smoothing} \\
+        Fig.\ref{fig:2bi} - Fig.\ref{fig:2biv} shows the results for noisy images with Gaussian smoothing and Fig.\ref{fig:2bv} - Fig.\ref{fig:2bviii} shows the results for the noisy image without Gaussian smoothing. Overall the results for both of the algorithms with per gaussian smoothing. That is expected, since both the filters are sensitive to noise. Noise reduction using Gaussian smoothing helps to improve the edge map. In this case also, LoG gives finer precision than the Prewitt detector.  
+      \end{itemize}
+    \end{itemize}
+\end{solution}
+
+\end{document}

@@ -62,10 +62,10 @@ def prewitt(image):
     edge_image = np.sqrt(I_x**2+I_y**2)
     return edge_image > otsu(edge_image)
 
-def plot_figure(original_img, img1, img2):
+def plot_figure(original_img, img1, img2, title = "Original Image",):
     plt.figure(figsize=(24,16))
     plt.subplot(1,3,1)
-    plt.title("Original Image")
+    plt.title(title)
     plt.imshow(original_img, cmap = 'gray')
     plt.subplot(1,3,2)
     plt.title("Edge Map(Prewitt)")
