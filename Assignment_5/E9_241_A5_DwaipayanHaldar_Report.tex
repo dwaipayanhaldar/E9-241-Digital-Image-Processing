@@ -1,0 +1,155 @@
+\documentclass[12pt,a4paper,onecolumn]{exam}
+
+\usepackage{amsmath}
+\usepackage{amssymb}
+\usepackage{graphicx}
+\usepackage{float}
+\usepackage{geometry}
+\usepackage{tikz}
+\usepackage[skins]{tcolorbox}
+\usepackage{listings}
+\usepackage{hyperref}
+\usepackage[font=small]{caption}
+\usepackage{subcaption}
+
+% --- Code Listing Colors ---
+\definecolor{codegreen}{rgb}{0,0.6,0}
+\definecolor{codegray}{rgb}{0.5,0.5,0.5}
+\definecolor{codepurple}{rgb}{0.58,0,0.82}
+\definecolor{backcolour}{rgb}{0.95,0.95,0.92}
+
+% --- Code Listing Style ---
+\lstdefinestyle{mystyle}{
+    backgroundcolor=\color{backcolour},
+    commentstyle=\color{codegreen},
+    keywordstyle=\color{magenta},
+    numberstyle=\tiny\color{codegray},
+    stringstyle=\color{codepurple},
+    basicstyle=\ttfamily\footnotesize,
+    breaklines=true,
+    captionpos=b,
+    keepspaces=true,
+    numbers=left,
+    numbersep=2pt,
+    showspaces=false,
+    showstringspaces=false,
+    showtabs=false,
+    tabsize=1
+}
+
+\lstset{style=mystyle}
+
+% --- Question Header Box ---
+\newcommand{\questionheader}[1]{%
+  \begin{tcolorbox}[
+    enhanced,
+    colback=black,
+    coltext=white,
+    boxrule=0pt,
+    fontupper=\Large\bfseries,
+    arc=4mm
+  ]
+  #1
+  \end{tcolorbox}%
+}
+
+% --- Answer Box ---
+\newtcolorbox{answerbox}[1]{
+  boxrule=0.4pt,
+  colback=white,
+  height=#1
+}
+
+% --- Blank Solution Environment ---
+\newenvironment{blanksolution}
+  {%
+    \renewcommand{\solutiontitle}{\noindent}%
+    \begin{solution}%
+  }%
+  {\end{solution}}
+
+\begin{document}
+
+\begingroup  
+    \centering
+    \LARGE E9 241 Digital Image Processing\\
+    \LARGE Assignment 5\\[0.5em]
+    \large \today\\[0.5em]
+    \large Dwaipayan Haldar\par
+\endgroup
+\noindent\rule{\textwidth}{0.5pt}
+\printanswers
+\renewcommand{\solutiontitle}{\noindent\textbf{Ans:}\enspace}
+
+\questionheader{1. Feature Extraction with a Pretrained Model}
+
+\begin{solution}
+    I have taken VGG16 as the CNN architecture. I have imported that without the top dense layer. Added one GlobalAveragePooling layer at the end just to preserve the correct shape to give it to the dense layer of 10 neurons. Feature is extracted from the original VGG16 architecture without the top layer trained on Imagenet data. \\
+\verb|Classification Accuracy on Cifar-10: 60.00%| \\
+The low accuracy can be explained as follows. The original model is trained on $224 \times 224$ data. So, the model does not know what features to take at such low resolution, so the accuracy is so low. Fig.\ref{fig:1} gives the loss curve for the same. 
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[scale = .6]{Output_Images/P01.png}
+    \caption{Loss Curve for the test split of CIFAR-10 data with pretrained weights}
+    \label{fig:1}
+\end{figure}
+
+
+\end{solution}
+
+\questionheader{2. Domain Shift Evaluation and Fine-Tuning}
+
+\begin{solution}
+    \begin{itemize}
+        \item[(a)] The accuracy on the domain shifted data(Here, \verb|glass_blur| is used as corrupted data) comes out to be even lower, which is expected. 
+\phantom{123}\\
+\verb|Classification Accuracy on Cifar-10-C: 45.72%| 
+        \item[(b)] Final CNN block of the pretrained model is fine-tuned using 20000 data from the corrupted data out of 50000. VGG-16 consists of 5 layers. So, the final CNN block is block5, which is unfreezed.
+        \item[(c)] New accuracy with fine-tuned data comes out to be much higher.\\
+        \verb|Accuracy CIFAR-10-C(fine-tuned) = 92.5%|\\ 
+        \textbf{Note:} I also tried this finetuned version on the original CIFAR-10 data. It came out as 84.78\% which is a significant increase. This is because now the model has learnt how to learn High-level features from such low resolution images. So, the final result can be summarized as in 
+Table\ref{table:1}. 
+\end{itemize}
+\end{solution}
+
+\begin{table}[h!]
+\centering
+\caption{Accuracy Table}
+\label{table:1}
+\begin{tabular}{|c|c|c|}
+\hline
+Accuracy Table & Accuracy(Before fine-tuning) & Accuracy(After fine-tuning)  \\ \hline
+CIFAR-10  & 60\%  & 84.78\%  \\ \hline
+CIFAR-C-10 & 45.72\%  & 92.5\%  \\ \hline
+\end{tabular}
+\end{table}
+
+\questionheader{3. Feature Representation Analysis}
+
+\begin{solution}
+    \begin{itemize}
+    \item[(c)] Fig.\ref{fig:2} shows the PCA plot for CIFAR-10(before and after) and CIFAR-C-10(before and after). The feature space for corrupted images (Bottom-Left) is noticeably "dampened" or compressed (e.g., the Y-axis range is smaller, mostly between -100 and 150) compared to the clean images (Top-Left, which extends to ~250). This indicates the model is failing to extract strong features from the noisy data.
+The distribution of the corrupted features (Bottom-Right) expands significantly and visually matches the distribution of the clean features (Top-Right). This confirms that the feature space has aligned; the model now generates similar feature activations for both noisy and clean images.
+        \begin{figure}[H]
+        \centering
+        \includegraphics[scale = .3]{Output_Images/P03.png}
+        \caption{PCA visualization of clean (before and after) and corrupted (before and after)}
+        \label{fig:2}
+        \end{figure}
+    \item[(d)] Yes, fine-tuning improved robustness. This occurred because unfreezing the final convolutional block allowed the model to adapt its high-level filters to the target domain (noisy images). By training on the corrupted data, the model learned to operate with the noise effectively. The results are visualized in Fig.\ref{fig:3} quite well where the range of corrupted image after fine-tuning and clean image after fine-tuning overlaps
+
+\end{itemize}
+
+        \begin{figure}[H]
+        \centering
+        \includegraphics[scale = .3]{Output_Images/P03c.png}
+        \caption{PCA visualization of clean (before and after) and corrupted (before and after)(overlapped)}
+        \label{fig:3}
+        \end{figure}
+
+
+
+\end{solution}
+
+\end{document}
